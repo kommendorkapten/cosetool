@@ -22,7 +22,7 @@ private.pem	public.pem
 ### Sign a message
 
 ```
-$ ../coset -s -m "hello world" -t text/plain -k private.pem
+$ coset -s -m "hello world" -t text/plain -k private.pem
 $ ls
 private.pem	public.pem	sig.cbor
 ```
