@@ -2,10 +2,11 @@
 
 Simple command line utility to interact with CBOR.
 Provides generation and validation of CBOR envelopes. Currently only
-supports ECDSA/PS256 with SHA256 keys.
+supports ECDSA/P256 with SHA256 keys.
 Keys can be privded in PEM format, or be generated in memory during
-signature generation. For ephemeral keys generated the public key is
-stored in the file `public.pem`. Existing files will be overwritten.
+signature generation. For ephemeral keys, the generate public key is
+stored in the file `public.pem`. Existing files will be overwritten
+without questions.
 When generating a signature, the content type can be set via the `-t`
 parameter.
 
