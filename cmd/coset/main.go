@@ -48,7 +48,7 @@ const (
 
 func usage() {
 	me := filepath.Base(os.Args[0])
-	fmt.Printf("usage: %s [-g] [-s] -m|-f [-k] [-e]\n", me)
+	fmt.Printf("usage: %s [-g keytype] [-s] -m msg|-f file [-k file] [-e aad] [-t contet-type] [-o format]\n", me)
 	os.Exit(1)
 }
 
