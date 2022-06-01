@@ -1,6 +1,9 @@
 # cosetool
 
-Simple command line utility to interact with CBOR.
+Simple command line utility to interact with [CBOR](https://datatracker.ietf.org/doc/html/rfc8152).
+As of now, only a single
+signer/[SIGN1](https://datatracker.ietf.org/doc/html/rfc8152#section-4.2)
+is implemented.
 Provides generation and validation of CBOR envelopes. Currently only
 supports ECDSA/P256 with SHA256 keys.
 Keys can be privded in PEM format, or be generated in memory during
