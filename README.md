@@ -1,17 +1,18 @@
 # cosetool
 
 Simple command line utility to interact with [CBOR](https://datatracker.ietf.org/doc/html/rfc8152).
-As of now, only a single
-signer/[SIGN1](https://datatracker.ietf.org/doc/html/rfc8152#section-4.2)
-is implemented.
-Provides generation and validation of CBOR envelopes. Currently only
-supports ECDSA/P256 with SHA256 keys.
-Keys can be privded in PEM format, or be generated in memory during
-signature generation. For ephemeral keys, the generate public key is
-stored in the file `public.pem`. Existing files will be overwritten
-without questions.
+Provides generation and validation of CBOR envelopes. Keys can be
+privded in PEM format, or be generated in memory during signature
+generation. For ephemeral keys, the generate public key is stored in
+the file `public.pem`. Existing files will be overwritten without
+questions.
 When generating a signature, the content type can be set via the `-t`
 parameter.
+
+## Limitations
+* Only a single signer/[Sign1](https://datatracker.ietf.org/doc/html/rfc8152#section-4.2)
+is implemented.
+* Only ECDSA/P256 with SHA256 is supported.
 
 ## Examples
 
