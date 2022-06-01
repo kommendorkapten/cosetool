@@ -66,3 +66,12 @@ Y9YMu0u3GLyyA3BBhF/AZz0ZQgQzgnGJ0vj1c5n1gN/kRLW1o26qLri0uYTHpRsdsf+lCemK
 /oozuIYULc3XOJhVUV8H5Nv9j5XprbM+ZfWQG+9RNvUZQaLCQ6kpQbgnFF9mdRMTM8ePsl4I
 vsqKZNooHIWjGZsO1kZC8kRBJEgPV+67Rd8=
 ```
+
+### Sign with AAD (Additional Authenticated Data)
+
+```
+$ coset -s -m "hello world" -e Nx/yRw3R208=
+$ coset -k public.pem -f sig.cbor -e Nx/yRw3R209=
+$ coset -k public.pem -f sig.cbor -e Nx/yRw3R200=
+panic: verification error
+```
