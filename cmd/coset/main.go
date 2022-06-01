@@ -55,7 +55,7 @@ func usage() {
 func main() {
 	var err error
 	g := flag.String("g", "", "Generate key pair")
-	s := flag.Bool("s", false, "Sing content")
+	s := flag.Bool("s", false, "Sign content")
 	k := flag.String("k", "", "Key to use")
 	e := flag.String("e", "", "Extra AAD, base64 encoded")
 	m := flag.String("m", "", "Message (string) to sign")
