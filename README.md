@@ -54,7 +54,7 @@ $ dd if=/dev/random bs=512 count=1 of=binary
 $ coset -s -t application/octet-stream -f binary
 $ ls
 binary		public.pem	sig.cbor
-$ oset -k public.pem -f sig.cbor -o base64
+$ coset -k public.pem -f sig.cbor -o base64
 Nx/yRw3R209ufdTr5DAeAI3T8uv/lFgzMdCQM+havVuyYSHeYVonSEe5c1QfVQ3OkSEIlbfZ
 V+mXDYggYdDnOWtuy4n1jlGss4QD2fvntCqqNo473QJcgOZBgb/YtMSQkg115i5/ssD7+LWS
 pfp/0EMi/vC2mo22sdUSrpDiz1EJ0mQx27AvRgC4y2k69nhIMw9ljr8TDwSMUr/M7/tdSxnd
