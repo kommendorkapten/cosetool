@@ -153,7 +153,6 @@ func main() {
 			fmt.Println(str)
 		}
 	}
-
 }
 
 func sign(pk *ecdsa.PrivateKey, c, eaad []byte, ctype string) {
