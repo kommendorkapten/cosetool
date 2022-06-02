@@ -1,7 +1,8 @@
 # cosetool
 
-Simple command line utility to interact with [CBOR](https://datatracker.ietf.org/doc/html/rfc8152).
-Provides generation and validation of CBOR envelopes. Keys can be
+Simple command line utility to interact with
+[COSE](https://datatracker.ietf.org/doc/html/rfc8152) envelopes.
+Provides generation and validation of COSE envelopes. Keys can be
 privded in PEM format, or be generated in memory during signature
 generation. For ephemeral keys, the generate public key is stored in
 the file `public.pem`. Existing files will be overwritten without
