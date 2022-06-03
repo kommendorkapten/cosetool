@@ -31,6 +31,7 @@ import (
 	"crypto/rand"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/pem"
 	"errors"
 	"flag"
@@ -61,7 +62,7 @@ func main() {
 	m := flag.String("m", "", "Message (string) to sign")
 	f := flag.String("f", "", "File to content or CBOR data")
 	t := flag.String("t", "", "Content type of the message")
-	o := flag.String("o", "", "Output payload in text or base64 format")
+	o := flag.String("o", "", "Output payload in text, hex or base64 format")
 
 	flag.Parse()
 
@@ -145,13 +146,18 @@ func main() {
 			panic(err)
 		}
 
+		var str string
 		switch *o {
 		case "text":
-			fmt.Println(string(msg.Payload))
+			str = string(msg.Payload)
+		case "hex":
+			str = hex.EncodeToString(msg.Payload)
 		case "base64":
-			str := base64.StdEncoding.EncodeToString(msg.Payload)
-			fmt.Println(str)
+			str = base64.StdEncoding.EncodeToString(msg.Payload)
+		default:
+			str = fmt.Sprintf("Output format '%s' not supported", *o)
 		}
+		fmt.Println(str)
 	}
 }
 
