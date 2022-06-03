@@ -47,6 +47,10 @@ const (
 	KeyEcdsa = "ecdsa"
 )
 
+const (
+	msgOpenFail = "could not open file %s for writing: %w"
+)
+
 func usage() {
 	me := filepath.Base(os.Args[0])
 	fmt.Printf("usage: %s [-g keytype] [-s] -m msg|-f file [-k file] [-e aad] [-t contet-type] [-o format]\n", me)
@@ -72,8 +76,13 @@ func main() {
 			panic(err)
 		}
 		pk := gpk.(*ecdsa.PrivateKey)
-		storePrivateKey(pk)
-		storePublicKey(pk.Public())
+		if err = storePrivateKey(pk); err != nil {
+			panic(err)
+		}
+
+		if err = storePublicKey(pk.Public()); err != nil {
+			panic(err)
+		}
 		return
 	}
 
@@ -100,6 +109,9 @@ func main() {
 		c = []byte(*m)
 	} else {
 		file, err := os.Open(*f)
+		if err != nil {
+			panic(err)
+		}
 		defer file.Close()
 		c, err = io.ReadAll(file)
 		if err != nil {
@@ -118,8 +130,9 @@ func main() {
 
 	if *s {
 		var pk *ecdsa.PrivateKey
+		ephemeral := *k == ""
 
-		if *k == "" {
+		if ephemeral {
 			gpk, err := generateKey(KeyEcdsa)
 			if err != nil {
 				fmt.Println("Could not generate key")
@@ -134,14 +147,21 @@ func main() {
 			}
 		}
 
-		sign(pk, c, eaad, *t)
-		if *k == "" {
-			storePublicKey(pk.Public())
+		err = sign(pk, c, eaad, *t)
+		if err != nil {
+			panic(err)
+		}
+		if ephemeral {
+			if err = storePublicKey(pk.Public()); err != nil {
+				panic(err)
+			}
 		}
 	} else {
 		pk, err := loadPublicKey(*k)
+		if err != nil {
+			panic(err)
+		}
 		msg, err := verify(pk, c, eaad)
-
 		if err != nil {
 			panic(err)
 		}
@@ -161,7 +181,8 @@ func main() {
 	}
 }
 
-func sign(pk *ecdsa.PrivateKey, c, eaad []byte, ctype string) {
+func sign(pk *ecdsa.PrivateKey, c, eaad []byte, ctype string) error {
+	filename := "sig.cbor"
 	protected := cose.ProtectedHeader{
 		cose.HeaderLabelAlgorithm: cose.AlgorithmES256,
 	}
@@ -170,25 +191,31 @@ func sign(pk *ecdsa.PrivateKey, c, eaad []byte, ctype string) {
 	}
 
 	signer, err := cose.NewSigner(cose.AlgorithmES256, pk)
+	if err != nil {
+		return err
+	}
 	msg, err := cose.Sign1(rand.Reader, signer, protected, c, eaad)
+	if err != nil {
+		return err
+	}
 	sig, err := msg.MarshalCBOR()
 	if err != nil {
-		fmt.Println("Failed to marshal signature into CBOR")
-		panic(err)
+		return err
 	}
-	file, err := os.Create("sig.cbor")
+	file, err := os.Create(filename)
 	if err != nil {
-		fmt.Println("Could not open file for writing")
-		panic(err)
+		return fmt.Errorf(msgOpenFail, filename, err)
 	}
 	defer file.Close()
 	n, err := file.Write(sig)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if n != len(sig) {
-		panic("Not all data written")
+		return fmt.Errorf("could not write all data")
 	}
+
+	return nil
 }
 
 func verify(pk crypto.PublicKey, c, eaad []byte) (*cose.Sign1Message, error) {
@@ -271,44 +298,48 @@ func loadPublicKey(path string) (crypto.PublicKey, error) {
 	return x509.ParsePKIXPublicKey(block.Bytes)
 }
 
-func storePrivateKey(pk *ecdsa.PrivateKey) {
+func storePrivateKey(pk *ecdsa.PrivateKey) error {
 	var err error
+	filename := "private.pem"
 	block := pem.Block{
 		Type: "EC PRIVATE KEY",
 	}
 	block.Bytes, err = x509.MarshalECPrivateKey(pk)
 	if err != nil {
-		panic(err)
+		return err
 	}
-	fKey, err := os.Create("private.pem")
+	fKey, err := os.Create(filename)
 	if err != nil {
-		fmt.Println("Could not open file for writing")
-		panic(err)
+		return fmt.Errorf(msgOpenFail, filename, err)
 	}
 	defer fKey.Close()
 	err = pem.Encode(fKey, &block)
 	if err != nil {
-		fmt.Println("Failed to write public key")
+		return fmt.Errorf("failed to write private key: %w", err)
 	}
+
+	return nil
 }
 
-func storePublicKey(pk crypto.PublicKey) {
+func storePublicKey(pk crypto.PublicKey) error {
 	var err error
+	filename := "public.pem"
 	block := pem.Block{
 		Type: "PUBLIC KEY",
 	}
 	block.Bytes, err = x509.MarshalPKIXPublicKey(pk)
 	if err != nil {
-		panic(err)
+		return err
 	}
-	fKey, err := os.Create("public.pem")
+	fKey, err := os.Create(filename)
 	if err != nil {
-		fmt.Println("Could not open file for writing")
-		panic(err)
+		return fmt.Errorf(msgOpenFail, filename, err)
 	}
 	defer fKey.Close()
 	err = pem.Encode(fKey, &block)
 	if err != nil {
-		fmt.Println("Failed to write public key")
+		return fmt.Errorf("failed to write public key: %w", err)
 	}
+
+	return nil
 }
