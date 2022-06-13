@@ -177,7 +177,10 @@ func main() {
 		default:
 			str = fmt.Sprintf("Output format '%s' not supported", *o)
 		}
-		fmt.Println(str)
+
+		if *o != "" {
+			fmt.Println(str)
+		}
 	}
 }
 
