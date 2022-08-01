@@ -12,3 +12,6 @@ vet:
 
 fmt:
 	go fmt ./...
+
+install:
+	go install ./cmd/coset
